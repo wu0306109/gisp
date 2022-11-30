@@ -1,3 +1,4 @@
+from collections import defaultdict
 from typing import Callable, Iterable, List, NamedTuple, Tuple
 
 
@@ -10,9 +11,25 @@ class Pattern(NamedTuple):
 def transform(
     sequences: List[Tuple[int, Iterable[str]]]
 ) -> List[Tuple[int, List[str]]]:
-    # items is sorted
-    # sequence is sorted by occurence time
-    pass
+    # TODO: items should be sorted
+    # TODO: sequence should be sorted by occurence time
+    # TODO: merge items in the same time (interval)
+
+    result_sequences = []
+    for sequence in sequences:
+        # XXX: use dictionary to merge items,
+        # when allowing time (interval) in float type may cause problem
+        items_mapper = defaultdict(list)  # {time -> items}
+        for time, items in sequence:
+            items_mapper[time].extend(items)
+
+        result_sequence = []
+        for time, items in sorted(items_mapper.items(), key=lambda x: x[0]):
+            result_sequence.append((time, sorted(items)))
+
+        result_sequences.append(result_sequence)
+
+    return result_sequences
 
 
 def mine_subpatterns() -> List[Pattern]:
