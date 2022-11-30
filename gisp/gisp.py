@@ -1,4 +1,5 @@
 from collections import Counter, defaultdict
+from math import inf
 from typing import Callable, List, NamedTuple, Tuple
 
 Sequence = List[Tuple[int, List[str]]]
@@ -118,9 +119,13 @@ def mine_subpatterns(
 
 
 def mine(
-    sequences: List[Sequence], itemize: Callable[[int], int],
-    min_support: int, min_interval: int = None, max_interval: int = None,
-    min_whole_interval: int = None, max_whole_interval: int = None,
+    sequences: List[Sequence],
+    itemize: Callable[[int], int],
+    min_support: int,
+    min_interval: int = 0,
+    max_interval: int = inf,
+    min_whole_interval: int = 0,
+    max_whole_interval: int = inf,
 ) -> List[Pattern]:
     """Mine frequent interval-extended sequences.
 
@@ -141,4 +146,58 @@ def mine(
         where sequence is a list of (itemized_interval, item),
         and support is the number of the pattern occurrence.
     """
-    pass
+    # count number of items in sequences
+    counter = Counter()
+    for sequence in sequences:
+        unique_items = set()
+        for interval, items in sequence:
+            unique_items.update(items)
+
+        counter.update(unique_items)
+
+    patterns = []
+    for item, count in counter.items():
+        if count < min_support:
+            continue
+
+        if min_whole_interval == 0:
+            patterns.append(Pattern(sequence=[(0, item)], support=count))
+
+        # generate child progected database by the item
+        child_db = []
+        for sequence in sequences:
+            child_postfixes = []
+            for i, (interval, items) in enumerate(sequence):
+                if item not in items:
+                    continue
+
+                items = items[items.index(item) + 1:]
+                child_postfix = [
+                    (0, items),
+                    *((ii - interval, its) for ii, its in sequence[i + 1:]),
+                ]
+                if items or len(child_postfix) > 1:
+                    child_postfixes.append(child_postfix)
+
+            if child_postfixes:
+                child_db.append(child_postfixes)
+
+        if not child_db or len(child_db) < min_support:
+            continue
+
+        # recursively mine child projected database
+        subpatterns = mine_subpatterns(
+            child_db,
+            itemize=itemize,
+            min_support=min_support,
+            min_interval=min_interval,
+            max_interval=max_interval,
+            min_whole_interval=min_whole_interval,
+            max_whole_interval=max_whole_interval,
+        )
+
+        for pattern in subpatterns:
+            pattern.sequence.insert(0, (0, item))
+        patterns.extend(subpatterns)
+
+    return patterns
