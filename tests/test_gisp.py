@@ -99,4 +99,4 @@ def test_mine_subpatterns() -> None:
         gisp.Pattern([(0, 'b'), ], 2),
         gisp.Pattern([(2, 'a'), ], 2),
     ]
-    assert left == right
+    assert sorted(left) == sorted(right)
