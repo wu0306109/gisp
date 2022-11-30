@@ -1,10 +1,12 @@
 from collections import defaultdict
 from typing import Callable, Iterable, List, NamedTuple, Tuple
 
+Sequence = List[Tuple[int, List[str]]]
+
 
 class Pattern(NamedTuple):
 
-    sequence: List[Tuple[int, str]]
+    sequence: List[Tuple[int, str]]  # frequent interval-extended sequence
     support: int  # number of the pattern occurrence
 
 
@@ -33,7 +35,7 @@ def mine_subpatterns() -> List[Pattern]:
 
 
 def mine(
-    sequences: List[Tuple[int, List[str]]], itemize: Callable[[int], int],
+    sequences: List[Sequence], itemize: Callable[[int], int],
     min_support: int, min_interval: int = None, max_interval: int = None,
     min_whole_interval: int = None, max_whole_interval: int = None,
 ) -> List[Pattern]:
