@@ -1,4 +1,3 @@
-from pandas.testing import assert_frame_equal
 from gisp import gisp
 
 
@@ -17,9 +16,9 @@ def test_transform() -> None:
         [(0, ['a', 'd', ]), (259200, ['c', ])],
         [(0, ['a', 'e', 'f', ]), (172800, ['a', 'b', ])],
     ]
-    assert_frame_equal(left, right, check_dtype=False)
+    assert left == right
 
-    left = [
+    sequences = [
         [
             (0, {'a', }),
             (2, {'a', 'c', }),
@@ -37,7 +36,7 @@ def test_transform() -> None:
             (19, {'b', 'c', }),
         ],
     ]
-    right = gisp.transform(sequences)
+    left = gisp.transform(sequences)
     right = [
         [
             (0, ['a', ]),
@@ -56,4 +55,4 @@ def test_transform() -> None:
             (19, ['b', 'c', ]),
         ],
     ]
-    assert_frame_equal(left, right, check_dtype=False)
+    assert left == right
