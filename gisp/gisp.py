@@ -84,7 +84,8 @@ def mine_subpatterns(
                         # skip redundant calculation to the next postfix
                         # when interval exceed the max whole interval
                         break
-                    elif not (item in items and item_interval == interval):
+                    elif not (item in items
+                              and itemize(item_interval) == interval):
                         # skip to the next item if not match
                         continue
 
