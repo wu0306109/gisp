@@ -28,7 +28,10 @@ def transform(sequences: Sequence) -> List[Tuple[int, List[str]]]:
     return result_sequences
 
 
-def mine_subpatterns() -> List[Pattern]:
+def mine_subpatterns(
+        projected_db: List[List[Sequence]], itemize: Callable[[int], int],
+        min_support: int, min_interval: int, max_interval: int,
+        min_whole_interval: int, max_whole_interval: int) -> List[Pattern]:
     pass
 
 
