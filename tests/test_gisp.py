@@ -9,54 +9,28 @@ def test_nothing() -> None:
 
 def test_transform() -> None:
     sequences = [
-        [(0, {'a', }), (86400, {'a', 'b', 'c', }), (259200, {'a', 'c', })],
-        [(0, {'a', 'd', }), (259200, {'c', })],
-        [(0, {'a', 'e', 'f', }), (172800, {'a', 'b', })],
+        [(0, {'a'}), (86400, {'a', 'b', 'c'}), (259200, {'a', 'c'})],
+        [(0, {'a', 'd'}), (259200, {'c'})],
+        [(0, {'a', 'e', 'f'}), (172800, {'a', 'b'})],
     ]
     left = gisp.transform(sequences)
     right = [
-        [(0, ['a', ]), (86400, ['a', 'b', 'c', ]), (259200, ['a', 'c', ])],
-        [(0, ['a', 'd', ]), (259200, ['c', ])],
-        [(0, ['a', 'e', 'f', ]), (172800, ['a', 'b', ])],
+        [(0, ['a']), (86400, ['a', 'b', 'c']), (259200, ['a', 'c'])],
+        [(0, ['a', 'd']), (259200, ['c'])],
+        [(0, ['a', 'e', 'f']), (172800, ['a', 'b'])],
     ]
     assert left == right
 
     sequences = [
-        [
-            (0, {'a', }),
-            (2, {'a', 'c', }),
-            (7, {'a', 'b', }),
-            (20, {'c', 'f', }),
-        ],
-        [
-            (0, {'a', 'd', }),
-            (14, {'c', }),
-            (26, {'c', }),
-        ],
-        [
-            (0, {'a', 'e', 'f', }),
-            (6, {'a', 'b', 'd', }),
-            (19, {'b', 'c', }),
-        ],
+        [(0, {'a'}), (2, {'a', 'c'}), (7, {'a', 'b'}), (20, {'c', 'f'})],
+        [(0, {'a', 'd'}), (14, {'c'}), (26, {'c'})],
+        [(0, {'a', 'e', 'f'}), (6, {'a', 'b', 'd'}), (19, {'b', 'c'})],
     ]
     left = gisp.transform(sequences)
     right = [
-        [
-            (0, ['a', ]),
-            (2, ['a', 'c', ]),
-            (7, ['a', 'b', ]),
-            (20, ['c', 'f', ]),
-        ],
-        [
-            (0, ['a', 'd', ]),
-            (14, ['c', ]),
-            (26, ['c', ]),
-        ],
-        [
-            (0, ['a', 'e', 'f', ]),
-            (6, ['a', 'b', 'd', ]),
-            (19, ['b', 'c', ]),
-        ],
+        [(0, ['a']), (2, ['a', 'c']), (7, ['a', 'b']), (20, ['c', 'f'])],
+        [(0, ['a', 'd']), (14, ['c']), (26, ['c'])],
+        [(0, ['a', 'e', 'f']), (6, ['a', 'b', 'd']), (19, ['b', 'c'])],
     ]
     assert left == right
 
@@ -79,38 +53,46 @@ def test_transform_items_in_same_time_are_merged() -> None:
 def test_mine_subpatterns() -> None:
     projected_db = [
         [
-            [(0, []), (86400, ['a', 'b', 'c', ]), (259200, ['a', 'c', ]), ],
-            [(0, ['b', 'c', ]), (172800, ['a', 'c', ]), ],
-            [(0, ['c', ]), ],
+            [(0, []), (86400, ['a', 'b', 'c']), (259200, ['a', 'c'])],
+            [(0, ['b', 'c']), (172800, ['a', 'c'])],
+            [(0, ['c'])],
         ],
         [
-            [(0, ['d', ]), (259200, ['c', ]), ]
+            [(0, ['d']), (259200, ['c'])],
         ],
         [
-            [(0, ['e', 'f', ]), (172800, ['a', 'b', ]), ],
-            [(0, ['b', ]), ],
+            [(0, ['e', 'f']), (172800, ['a', 'b'])],
+            [(0, ['b'])],
         ],
     ]
     left = gisp.mine_subpatterns(
-        projected_db, itemize=lambda t: t//86400, min_support=2,
-        min_interval=0, max_interval=172800,
-        min_whole_interval=0, max_whole_interval=inf)
+        projected_db,
+        itemize=lambda t: t // 86400,
+        min_support=2,
+        min_interval=0,
+        max_interval=172800,
+        min_whole_interval=0,
+        max_whole_interval=inf,
+    )
     right = [
-        gisp.Pattern([(0, 'b'), ], 2),
-        gisp.Pattern([(2, 'a'), ], 2),
+        gisp.Pattern([(0, 'b')], 2),
+        gisp.Pattern([(2, 'a')], 2),
     ]
     assert sorted(left) == sorted(right)
 
 
 def test_mine() -> None:
     sequences = [
-        [(0, ['a', ]), (86400, ['a', 'b', 'c', ]), (259200, ['a', 'c', ])],
-        [(0, ['a', 'd', ]), (259200, ['c', ])],
-        [(0, ['a', 'e', 'f', ]), (172800, ['a', 'b', ])],
+        [(0, ['a']), (86400, ['a', 'b', 'c']), (259200, ['a', 'c'])],
+        [(0, ['a', 'd']), (259200, ['c'])],
+        [(0, ['a', 'e', 'f']), (172800, ['a', 'b'])],
     ]
     left = gisp.mine(
-        sequences, itemize=lambda t: t//86400,
-        min_support=2, max_interval=172800)
+        sequences,
+        itemize=lambda t: t // 86400,
+        min_support=2,
+        max_interval=172800,
+    )
     right = [
         gisp.Pattern([(0, 'a')], 3),
         gisp.Pattern([(0, 'a'), (0, 'b')], 2),

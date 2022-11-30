@@ -29,9 +29,14 @@ def transform(sequences: Sequence) -> List[Tuple[int, List[str]]]:
 
 
 def mine_subpatterns(
-        projected_db: List[List[Sequence]], itemize: Callable[[int], int],
-        min_support: int, min_interval: int, max_interval: int,
-        min_whole_interval: int, max_whole_interval: int) -> List[Pattern]:
+    projected_db: List[List[Sequence]],
+    itemize: Callable[[int], int],
+    min_support: int,
+    min_interval: int,
+    max_interval: int,
+    min_whole_interval: int,
+    max_whole_interval: int,
+) -> List[Pattern]:
     # TODO: implement fucntions in class to avoid passing so many arguments
 
     # Count number of (itemize(interval), item) pairs in projected database
@@ -54,7 +59,7 @@ def mine_subpatterns(
                     continue
 
                 unique_pairs.update(
-                    (itemize(whole_interval-origin), item) for item in items)
+                    (itemize(whole_interval - origin), item) for item in items)
 
         counter.update(unique_pairs)
 
@@ -63,8 +68,7 @@ def mine_subpatterns(
         if count < min_support:
             continue
 
-        patterns.append(
-            Pattern(sequence=[(interval, item), ], support=count))
+        patterns.append(Pattern(sequence=[(interval, item)], support=count))
 
         # generate child progected database by
         # the (itemize(interval), item) pair
@@ -74,7 +78,7 @@ def mine_subpatterns(
             for postfix in postfixes:
                 origin = postfix[0][0]  # origin interval of the postfix
                 for i, (whole_interval, items) in enumerate(postfix):
-                    item_interval = whole_interval-origin
+                    item_interval = whole_interval - origin
                     if item_interval > max_whole_interval:
                         # skip redundant calculation to the next postfix
                         # when interval exceed the max whole interval
@@ -84,8 +88,8 @@ def mine_subpatterns(
                         continue
 
                     # generate child postfix
-                    items = items[items.index(item)+1:]
-                    child_postfix = [(whole_interval, items), *postfix[i+1:]]
+                    items = items[items.index(item) + 1:]
+                    child_postfix = [(whole_interval, items), *postfix[i + 1:]]
                     if items or len(child_postfix) > 1:
                         child_postfixes.append(child_postfix)
 
@@ -97,10 +101,14 @@ def mine_subpatterns(
 
         # recursively mine child projected database
         subpatterns = mine_subpatterns(
-            child_db, itemize=itemize, min_support=min_support,
-            min_interval=min_interval, max_interval=max_interval,
+            child_db,
+            itemize=itemize,
+            min_support=min_support,
+            min_interval=min_interval,
+            max_interval=max_interval,
             min_whole_interval=min_whole_interval,
-            max_whole_interval=max_whole_interval)
+            max_whole_interval=max_whole_interval,
+        )
 
         for pattern in subpatterns:
             pattern.sequence.insert(0, (interval, item))
