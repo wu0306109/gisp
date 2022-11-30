@@ -10,9 +10,7 @@ class Pattern(NamedTuple):
     support: int  # number of the pattern occurrence
 
 
-def transform(
-    sequences: List[Tuple[int, Iterable[str]]]
-) -> List[Tuple[int, List[str]]]:
+def transform(sequences: Sequence) -> List[Tuple[int, List[str]]]:
     result_sequences = []
     for sequence in sequences:
         # XXX: use dictionary to merge items,
