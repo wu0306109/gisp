@@ -100,3 +100,22 @@ def test_mine_subpatterns() -> None:
         gisp.Pattern([(2, 'a'), ], 2),
     ]
     assert sorted(left) == sorted(right)
+
+
+def test_mine() -> None:
+    sequences = [
+        [(0, ['a', ]), (86400, ['a', 'b', 'c', ]), (259200, ['a', 'c', ])],
+        [(0, ['a', 'd', ]), (259200, ['c', ])],
+        [(0, ['a', 'e', 'f', ]), (172800, ['a', 'b', ])],
+    ]
+    left = gisp.mine(
+        sequences, itemize=lambda t: t//86400,
+        min_support=2, max_interval=172800)
+    right = [
+        gisp.Pattern([(0, 'a')], 3),
+        gisp.Pattern([(0, 'a'), (0, 'b')], 2),
+        gisp.Pattern([(0, 'a'), (2, 'a')], 2),
+        gisp.Pattern([(0, 'b')], 2),
+        gisp.Pattern([(0, 'c')], 2),
+    ]
+    assert sorted(left) == sorted(right)
