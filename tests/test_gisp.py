@@ -1,6 +1,11 @@
-from math import inf
+from math import inf, log2
 
 from gisp import gisp
+from gisp.gisp import Pattern, mine, mine_subpatterns
+
+# TODO: sort extpectd values in advance for easy testing
+
+# TODO: use Pattern(), mine(), ... instead of gisp.Pattern(), gisp.mine(), ...
 
 
 def test_nothing() -> None:
@@ -101,3 +106,69 @@ def test_mine() -> None:
         gisp.Pattern([(0, 'c')], 2),
     ]
     assert sorted(left) == sorted(right)
+
+
+def test_mine_subpatterns_with_multi_level_projection() -> None:
+    projected_db = [
+        [
+            [(0, ['b']), (13, ['c', 'f'])],
+        ],
+        [
+            [(0, ['b', 'c']), (13, ['b', 'c'])],
+        ],
+    ]
+    left = mine_subpatterns(
+        projected_db,
+        itemize=lambda t: int(log2(t + 1)),
+        min_support=2,
+        min_interval=0,
+        max_interval=inf,
+        min_whole_interval=0,
+        max_whole_interval=inf,
+    )
+    right = [
+        Pattern([(0, 'b')], 2),
+        Pattern([(3, 'c')], 2),
+        Pattern([(0, 'b'), (3, 'c')], 2),
+    ]
+    assert sorted(left) == sorted(right)
+
+    projected_db = [
+        [
+            [(0, []), (2, ['a', 'c']), (7, ['a', 'b']), (20, ['c', 'f'])],
+            [(0, ['c']), (5, ['a', 'b']), (18, ['c', 'f'])],
+            [(0, ['b']), (13, ['c', 'f'])],
+        ],
+        [
+            [(0, ['d']), (14, ['c']), (26, ['c'])],
+        ],
+        [
+            [(0, ['e', 'f']), (6, ['a', 'b', 'd']), (19, ['b', 'c'])],
+            [(0, ['b', 'd']), (13, ['b', 'c'])],
+        ],
+    ]
+    left = mine_subpatterns(
+        projected_db,
+        itemize=lambda t: int(log2(t + 1)),
+        min_support=2,
+        min_interval=0,
+        max_interval=inf,
+        min_whole_interval=0,
+        max_whole_interval=inf,
+    )
+    right = [
+        Pattern(sequence=[(0, 'b')], support=2),
+        Pattern(sequence=[(0, 'b'), (3, 'c')], support=2),
+        Pattern(sequence=[(0, 'd')], support=2),
+        Pattern(sequence=[(0, 'd'), (3, 'c')], support=2),
+        Pattern(sequence=[(2, 'a')], support=2),
+        Pattern(sequence=[(2, 'a'), (0, 'b')], support=2),  #
+        Pattern(sequence=[(2, 'a'), (0, 'b'), (3, 'c')], support=2),  #
+        Pattern(sequence=[(2, 'a'), (3, 'c')], support=2),  #
+        Pattern(sequence=[(2, 'b')], support=2),
+        Pattern(sequence=[(2, 'b'), (3, 'c')], support=2),  #
+        Pattern(sequence=[(3, 'b')], support=2),
+        Pattern(sequence=[(3, 'c')], support=3),
+        Pattern(sequence=[(4, 'c')], support=3)
+    ]
+    assert sorted(left) == right
