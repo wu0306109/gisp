@@ -1,5 +1,5 @@
 from collections import Counter, defaultdict
-from typing import Callable, Iterable, List, NamedTuple, Tuple
+from typing import Callable, List, NamedTuple, Tuple
 
 Sequence = List[Tuple[int, List[str]]]
 
