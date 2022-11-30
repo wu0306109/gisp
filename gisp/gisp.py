@@ -11,10 +11,6 @@ class Pattern(NamedTuple):
 def transform(
     sequences: List[Tuple[int, Iterable[str]]]
 ) -> List[Tuple[int, List[str]]]:
-    # TODO: items should be sorted
-    # TODO: sequence should be sorted by occurence time
-    # TODO: merge items in the same time (interval)
-
     result_sequences = []
     for sequence in sequences:
         # XXX: use dictionary to merge items,

@@ -4,6 +4,7 @@ from gisp import gisp
 def test_nothing() -> None:
     assert True
 
+
 def test_transform() -> None:
     sequences = [
         [(0, {'a', }), (86400, {'a', 'b', 'c', }), (259200, {'a', 'c', })],
@@ -56,3 +57,18 @@ def test_transform() -> None:
         ],
     ]
     assert left == right
+
+
+def test_transform_item_is_sorted() -> None:
+    # TODO: check if items are sorted
+    pass
+
+
+def test_transform_sequence_is_sorted() -> None:
+    # TODO: check if sequence is sorted by occurence time
+    pass
+
+
+def test_transform_items_in_same_time_are_merged() -> None:
+    # TODO: check items in the are merged
+    pass
