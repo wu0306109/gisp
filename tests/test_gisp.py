@@ -172,3 +172,39 @@ def test_mine_subpatterns_with_multi_level_projection() -> None:
         Pattern(sequence=[(4, 'c')], support=3)
     ]
     assert sorted(left) == right
+
+
+def test_mine_with_multi_level_projection() -> None:
+    sequences = [
+        [(0, ['a']), (2, ['a', 'c']), (7, ['a', 'b']), (20, ['c', 'f'])],
+        [(0, ['a', 'd']), (14, ['c']), (26, ['c'])],
+        [(0, ['a', 'e', 'f']), (6, ['a', 'b', 'd']), (19, ['b', 'c'])],
+    ]
+    left = mine(
+        sequences,
+        itemize=lambda t: int(log2(t + 1)),
+        min_support=2,
+    )
+    right = [
+        Pattern(sequence=[(0, 'a')], support=3),
+        Pattern(sequence=[(0, 'a'), (0, 'b')], support=2),
+        Pattern(sequence=[(0, 'a'), (0, 'b'), (3, 'c')], support=2),
+        Pattern(sequence=[(0, 'a'), (0, 'd')], support=2),
+        Pattern(sequence=[(0, 'a'), (0, 'd'), (3, 'c')], support=2),
+        Pattern(sequence=[(0, 'a'), (2, 'a')], support=2),
+        Pattern(sequence=[(0, 'a'), (2, 'a'), (0, 'b')], support=2),
+        Pattern(sequence=[(0, 'a'), (2, 'a'), (0, 'b'), (3, 'c')], support=2),
+        Pattern(sequence=[(0, 'a'), (2, 'a'), (3, 'c')], support=2),
+        Pattern(sequence=[(0, 'a'), (2, 'b')], support=2),
+        Pattern(sequence=[(0, 'a'), (2, 'b'), (3, 'c')], support=2),
+        Pattern(sequence=[(0, 'a'), (3, 'b')], support=2),
+        Pattern(sequence=[(0, 'a'), (3, 'c')], support=3),
+        Pattern(sequence=[(0, 'a'), (4, 'c')], support=3),
+        Pattern(sequence=[(0, 'b')], support=2),
+        Pattern(sequence=[(0, 'b'), (3, 'c')], support=2),
+        Pattern(sequence=[(0, 'c')], support=3),
+        Pattern(sequence=[(0, 'd')], support=2),
+        Pattern(sequence=[(0, 'd'), (3, 'c')], support=2),
+        Pattern(sequence=[(0, 'f')], support=2),
+    ]
+    assert sorted(left) == right
