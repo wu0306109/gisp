@@ -41,11 +41,16 @@ def mine_subpatterns(
     # TODO: implement fucntions in class to avoid passing so many arguments
 
     # Count number of (itemize(interval), item) pairs in projected database
-    counter = Counter()
+    # that meet all constraints to be a valid pattern.
+    pair_counter = Counter()
+    # count number of potential pattern pairs that not meet the max whole
+    # interval constraint which need more projections.
+    projection_counter = Counter()
     for postfixes in projected_db:
         # for each postfixes of a corresponding sequence,
         # get all unique (itemize(interval), item) pairs fitting the constraints
-        unique_pairs = set()
+        unique_valid_pairs = set()
+        unique_potential_pairs = set()
         for postfix in postfixes:
             origin = postfix[0][0]  # origin interval of the postfix
             for whole_interval, items in postfix:
@@ -54,22 +59,32 @@ def mine_subpatterns(
                         or interval > max_interval):
                     # because sequence is sorted, no need to continue
                     break
-                elif (whole_interval < min_whole_interval
-                      or interval < min_interval):
+                elif interval < min_interval:
                     # skip if not fitting the constraints
                     continue
+                elif whole_interval < min_whole_interval:
+                    unique_potential_pairs.update(
+                        (itemize(whole_interval - origin), item)
+                        for item in items)
+                    continue
 
-                unique_pairs.update(
+                unique_valid_pairs.update(
                     (itemize(whole_interval - origin), item) for item in items)
 
-        counter.update(unique_pairs)
+        pair_counter.update(unique_valid_pairs)
+        projection_counter.update(unique_potential_pairs)
 
     patterns = []
-    for (interval, item), count in counter.items():
+    for (interval, item), count in (pair_counter + projection_counter).items():
         if count < min_support:
             continue
 
-        patterns.append(Pattern(sequence=[(interval, item)], support=count))
+        if count - projection_counter[(interval, item)] >= min_support:
+            patterns.append(
+                Pattern(
+                    sequence=[(interval, item)],
+                    support=count,
+                ))
 
         # generate child progected database by
         # the (itemize(interval), item) pair
