@@ -2,16 +2,27 @@ from collections import Counter, defaultdict
 from math import inf
 from typing import Callable, List, NamedTuple, Tuple
 
-Sequence = List[Tuple[int, List[str]]]
+
+class IntervalItem(NamedTuple):
+
+    # interval from occurence time of first item (of the whole sequence)
+    interval: int
+    items: List[int]  # note that items  should be sorted ascendingly
+
+
+class FrequentPair(NamedTuple):
+
+    interval: int  # itemized interval of the item
+    item: str
 
 
 class Pattern(NamedTuple):
 
-    sequence: List[Tuple[int, str]]  # frequent interval-extended sequence
+    sequence: List[FrequentPair]  # frequent interval-extended sequence
     support: int  # number of the pattern occurrence
 
 
-def transform(sequences: Sequence) -> Sequence:
+def transform(sequences: List[Tuple[int, List[str]]]) -> List[IntervalItem]:
     result_sequences = []
     for sequence in sequences:
         # XXX: use dictionary to merge items,
@@ -30,7 +41,7 @@ def transform(sequences: Sequence) -> Sequence:
 
 
 def mine_subpatterns(
-    projected_db: List[List[Sequence]],
+    projected_db: List[List[IntervalItem]],
     itemize: Callable[[int], int],
     min_support: int,
     min_interval: int,
@@ -135,7 +146,7 @@ def mine_subpatterns(
 
 
 def mine(
-    sequences: List[Sequence],
+    sequences: List[IntervalItem],
     itemize: Callable[[int], int],
     min_support: int,
     min_interval: int = 0,
