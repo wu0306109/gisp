@@ -8,10 +8,6 @@ from gisp.gisp import Pattern, mine, mine_subpatterns
 # TODO: use Pattern(), mine(), ... instead of gisp.Pattern(), gisp.mine(), ...
 
 
-def test_nothing() -> None:
-    assert True
-
-
 def test_transform() -> None:
     sequences = [
         [(0, {'a'}), (86400, {'a', 'b', 'c'}), (259200, {'a', 'c'})],
