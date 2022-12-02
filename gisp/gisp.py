@@ -162,6 +162,8 @@ def mine(
         where sequence is a list of (itemized_interval, item),
         and support is the number of the pattern occurrence.
     """
+    sequences = transform(sequences)
+
     # count number of items in sequences
     counter = Counter()
     for sequence in sequences:
