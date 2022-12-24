@@ -6,6 +6,10 @@
 cd interval-sequential-pattern-x.x.x
 python3 -m pip install .
 ```
+or
+```
+pip install gisp
+```
 
 ## Quick Start
 
