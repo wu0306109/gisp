@@ -128,3 +128,9 @@ dmypy.json
 # Pyre type checker
 .pyre/
 main.ipynb
+
+# env
+env/
+
+# pyti
+.pypirc
